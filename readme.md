@@ -10,6 +10,6 @@ npm run dev
 
 ## Build for production in the dist/ directory
 npm run build
-```
+
 ## 3D Models 
 Credits:https://sketchfab.com/
