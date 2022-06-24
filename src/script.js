@@ -1,7 +1,6 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import * as dat from 'dat.gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
@@ -507,7 +506,7 @@ gltfLoader.load(
         rocksbox.setFromObject(gltf_rocks.scene)
         // arrboundingbox.push(rocksbox)
         var boxhelper=new THREE.Box3Helper(rocksbox, 0xffff00);
-        scene.add(boxhelper)
+        // scene.add(boxhelper)
     }
 )
 
@@ -553,13 +552,13 @@ const textureLoader=new THREE.TextureLoader()
 const floor = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(1800,1800),
         new THREE.MeshStandardMaterial({
-            // map: grassColorTexture,
-            // aoMap: grassAmbientOcclusionTexture,
-            // normalMap: grassNormalTexture,
-            // roughnessMap: grassRoughnessTexture
-            color:'#DD866E' //SKIN COLOR
-            // color:'#B6844A' //LIGHT BROWN
-            // color:'#CEB371'
+            map: grassColorTexture,
+            aoMap: grassAmbientOcclusionTexture,
+            normalMap: grassNormalTexture,
+            roughnessMap: grassRoughnessTexture
+            // color:'#DD866E' //SKIN COLOR
+            // // color:'#B6844A' //LIGHT BROWN
+            // // color:'#CEB371'
 
 
     })
@@ -683,7 +682,7 @@ controls1.rotateSpeed = 0.4;
 controls1.dampingFactor = 0.1;
 controls1.enableZoom = true;
 controls1.enablePan = false;
-// controls1.maxPolarAngle = Math.PI/2 ;
+controls1.maxPolarAngle = Math.PI/2 ;
 let fwdValue = 0;
 let bkdValue = 0;
 let rgtValue = 0;
