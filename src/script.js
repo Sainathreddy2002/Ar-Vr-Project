@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
-
+import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 
 
 
@@ -12,7 +12,7 @@ var nipplejs=require('nipplejs')
 // /**
 //  * Base
 //  */
-// // Debug Gui declaration
+// Debug Gui declaration
 // const gui = new dat.GUI()
 // const debug={}
 
@@ -647,10 +647,14 @@ scene.add(ambientLight1)
  */
  const renderer = new THREE.WebGLRenderer()//{canvas:canvas})
  document.body.appendChild(renderer.domElement);
+ document.body.appendChild( VRButton.createButton( renderer ) );
+
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.xr.enabled = true;
+
 
 window.addEventListener('resize', () =>
 {
@@ -693,7 +697,7 @@ let joyManager;
 let angle
 addJoystick();
 function updatePlayer(){
-    // move the player
+    // move the human model
      angle = controls1.getAzimuthalAngle()
     if(glthuman!=null){
       if (fwdValue > 0) {
@@ -727,9 +731,13 @@ function updatePlayer(){
   
   // reposition camera
   camera0.position.sub(controls1.target)
-  controls1.target.copy(glthuman.scene.position)
   camera0.position.add(glthuman.scene.position)
-    }
+  controls1.target.copy(glthuman.scene.position)
+  if(renderer.xr.enabled){
+  dolly.position.add(glthuman.scene.position)
+  dolly.position.sub(controls1.target)
+  }
+}
 }  
 
 function addJoystick(){
@@ -832,6 +840,35 @@ earthmaterial.roughness=0
 earthmaterial.envMap=envmaptextureearth
 
 
+//VR
+//xr camera
+// document.body.appendChild(VRButton.createButton(addJoystick()))
+var dolly=new THREE.Group()
+dolly.add(camera0)
+
+
+// controllers
+const rightController=renderer.xr.getController(0)
+const leftController=renderer.xr.getController(1)
+//x-axis movement
+rightController.addEventListener("selectstart",()=>{
+    dolly.position.x+=13
+})
+
+leftController.addEventListener("selectstart",()=>{
+    dolly.position.x-=13
+})
+
+//y-axis movement
+rightController.addEventListener("squeezestart",()=>{
+    dolly.position.y+=13
+})
+
+leftController.addEventListener("squeezestart",()=>{
+    dolly.position.y-=13
+})
+
+
 
 /**
  * Animate
@@ -882,5 +919,10 @@ renderer.render(scene,camera0)
 // Call tick again on the next frame
 window.requestAnimationFrame(tick)
 }
+renderer.setAnimationLoop( function () {
+
+	renderer.render( scene, camera0 );
+
+} );
 
 tick()
